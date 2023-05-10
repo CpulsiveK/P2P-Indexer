@@ -1,9 +1,12 @@
-from server import Server
+import sys
+sys.path.append('../')
+from indexer.indexer import Indexer
 
 
 def main():
-    server = Server()
+    server = Indexer()
     server.startServer()
 
-    if __name__ == '__main__':
-        main()
+
+if __name__ == '__main__':
+    main()
