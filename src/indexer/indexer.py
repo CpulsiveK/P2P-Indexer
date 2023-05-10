@@ -1,8 +1,8 @@
-from server_utils import *
+from indexer.indexer_utils import *
 import threading
 
 
-class Server:
+class Indexer:
     data_structure = RoutingInfoDataStructure()
 
     def __init__(self):
