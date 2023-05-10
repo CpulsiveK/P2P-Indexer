@@ -24,7 +24,7 @@ class Indexer:
             requestTypes[request_type](client_socket, id)
 
 
-    def startServer(self):
+    def startIndexer(self):
         try:
 
             server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

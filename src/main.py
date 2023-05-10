@@ -5,7 +5,7 @@ from indexer.indexer import Indexer
 
 def main():
     server = Indexer()
-    server.startServer()
+    server.startIndexer()
 
 
 if __name__ == '__main__':
