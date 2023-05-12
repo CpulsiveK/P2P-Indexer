@@ -1,4 +1,4 @@
-from indexer.indexer_utils import *
+from indexer_utils import *
 from concurrent.futures import ThreadPoolExecutor
 
 
@@ -21,13 +21,13 @@ class Indexer:
 
         id, request_type = data.split()
 
-        self.active_connections.setdefault(id, '').extend(client_address[0])
-        print(self.active_connections)
-
         if request_type in requestTypes:
             requestTypes[request_type](client_socket, id)
 
+        self.active_connections.setdefault(id, '').extend(client_address[0])
+        print(self.active_connections)
 
+        
     def startIndexer(self):
         try:
 
@@ -53,9 +53,8 @@ class Indexer:
         files_to_be_indexed:list[str] = []
         
         for i in range(num_of_files):
-            data = client_socket.recv(BUFFER_SIZE).decode()
-            print(data)
-            files_to_be_indexed.append(data)
+            files_to_be_indexed.append(
+                client_socket.recv(BUFFER_SIZE).decode())
             
         self.data_structure.createDataStructure(files_to_be_indexed, id)
         print(self.data_structure.shared_files_info)
@@ -68,16 +67,22 @@ class Indexer:
 
         result:None or list(str) = self.data_structure.search(file_name)
         
-        if result:
-            available_client_addresses:list[str] = []
+        if result != None:
+            available_client_addresses:list[tuple[str, str]] = []
 
             for id in result:
                 if id in self.active_connections:
-                    available_client_addresses.append(self.active_connections[id])
+                    available_client_addresses.append(id, self.active_connections[id])
 
             for address in available_client_addresses:
-                client_socket.send(address.encode())
-                print("File found")
+                for content in address:
+                    client_socket.send(content.encode())
+            
+            print("File found")
         else:
             client_socket.send('File does not exist'.encode())
             print("File not found")
+
+
+indexer = Indexer()
+indexer.startIndexer()
