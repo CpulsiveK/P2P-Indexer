@@ -31,9 +31,13 @@ class Indexer:
         
     def startIndexer(self):
         try:
+            thread = threading.Thread(target=broadcastIndexerAddr)
+            thread.start()
+
             server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             server_socket.bind((SERVER_ADDR, PORT))
             server_socket.listen()
+
             print('Listening for incoming connections...')
 
             executor = ThreadPoolExecutor(max_workers=10)
