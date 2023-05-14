@@ -33,10 +33,13 @@ class RoutingInfoDataStructure:
 
 
 def broadcastIndexerAddr():
-    multicast_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    multicast_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, TTL)
+    try:
+        multicast_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        multicast_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, TTL)
 
-    while True:
-        multicast_socket.sendto(MESSAGE, (MULTICAST_ADDR, MULTICAST_PORT))
-        print(f"[BROADCASTING] {MESSAGE}............")
-        time.sleep(15)
+        while True:
+            multicast_socket.sendto(MESSAGE, (MULTICAST_ADDR, MULTICAST_PORT))
+            print(f"[BROADCASTING] {MESSAGE}............")
+            time.sleep(5)
+    except socket.error as error:
+        print(error)
