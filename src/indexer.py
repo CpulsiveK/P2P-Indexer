@@ -1,6 +1,5 @@
 from indexer_utils import *
 from concurrent.futures import ThreadPoolExecutor
-import threading
 
 
 class Indexer:
@@ -31,9 +30,6 @@ class Indexer:
         
     def startIndexer(self):
         try:
-            thread = threading.Thread(target=broadcastIndexerAddr)
-            thread.start()
-
             server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             server_socket.bind((SERVER_ADDR, PORT))
             server_socket.listen()
@@ -41,6 +37,7 @@ class Indexer:
             print('Listening for incoming connections...')
 
             executor = ThreadPoolExecutor(max_workers=10)
+            executor.submit(unicastIndexerAddr)
 
             while True:
                 client_socket, client_address = server_socket.accept()
@@ -86,8 +83,4 @@ class Indexer:
         else:
             client_socket.send('File does not exist'.encode())
             print("File not found")
-
-
-indexer = Indexer()
-indexer.startIndexer()
 

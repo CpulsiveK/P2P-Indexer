@@ -1,6 +1,5 @@
 import socket
 import struct
-import time
 
 SERVER_ADDR:str = socket.gethostbyname(socket.gethostname())
 MULTICAST_ADDR:str = '224.0.0.1'
@@ -32,11 +31,26 @@ class RoutingInfoDataStructure:
             return ids_of_files_found
 
 
-def broadcastIndexerAddr():
-    multicast_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    multicast_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, TTL)
+def unicastIndexerAddr():
+    unicastPort = 10000
 
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    # Set the socket options to allow broadcasting
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+
+    # Bind the socket to a specific address and port
+    server_address = ('', unicastPort)
+    sock.bind(server_address)
+
+    print('Listening for new nodes')
+
+    # Receive messages
     while True:
-        multicast_socket.sendto(MESSAGE, (MULTICAST_ADDR, MULTICAST_PORT))
-        print(f"[BROADCASTING] {MESSAGE}............")
-        time.sleep(15)
+        data, address = sock.recvfrom(BUFFER_SIZE)
+        message = data.decode()
+        print(f"Received message: {message} from {address}")
+
+        if (message == "indexer ip?"):
+            sock.sendto(SERVER_ADDR.encode(), address)
+            print(f"sent {SERVER_ADDR}")
