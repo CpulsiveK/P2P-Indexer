@@ -1,3 +1,4 @@
+import json
 import socket
 import struct
 
@@ -20,20 +21,6 @@ class RoutingInfoDataStructure:
                     self.shared_files_info[id][filesID] = files[filesID]
         else:
             self.shared_files_info[id] = files
-                
-
-    def search(self, filename:str) -> list[str]:
-        ids_of_files_found:list[str] = []
-
-        for id in self.shared_files_info:
-            for file in self.shared_files_info[id]:
-                if file == filename:
-                    ids_of_files_found.append(id)
-        
-        if len(ids_of_files_found) == 0:
-            return None
-        else:
-            return ids_of_files_found
 
 
 def unicastIndexerAddr():
