@@ -11,6 +11,7 @@ class Indexer:
 
     active_connections: dict = {}
 
+
     def threadHandler(self, client_socket: socket.SocketType, client_address):
         requestTypes: dict = {
             "makeFilePublic": self.indexReceivedPublicFiles,
@@ -24,14 +25,18 @@ class Indexer:
             print(f'Received request: {data}')
         except socket.error as error:
             print(error)
+        
+        if data == "searchFile":
+            requestTypes[data](client_socket)
+        else:
+            id, request_type = data.split()
 
-        id, request_type = data.split()
-
-        if request_type in requestTypes:
-            requestTypes[request_type](client_socket, id)
+            if request_type in requestTypes:
+                requestTypes[request_type](client_socket, id)
 
         with self.lock:
             self.active_connections[id] = client_address
+
 
     def startIndexer(self):
         try:
@@ -52,6 +57,7 @@ class Indexer:
         except socket.error as error:
             print(error)
 
+
     def indexReceivedPublicFiles(self, client_socket: socket.SocketType, id):
         files_to_be_indexed: str = client_socket.recv(BUFFER_SIZE).decode()
 
@@ -64,27 +70,28 @@ class Indexer:
 
             print(self.data_structure.shared_files_info)
 
-    def returnSearchedResult(self, client_socket: socket.SocketType, id):
+
+    def returnSearchedResult(self, client_socket: socket.SocketType):
         file_name: str = client_socket.recv(BUFFER_SIZE).decode()
         print(file_name)
 
         ids_of_files_found: list[str] = {}
 
-        for id in self.data_structure.shared_files_info:
-            for file in self.data_structure.shared_files_info[id]:
+        for ids in self.data_structure.shared_files_info:
+            for file in self.data_structure.shared_files_info[ids]:
                 match_letters = ''
                 if len(file) >= 3 and len(file_name) >= 3:
                     match_letters = file[:3]
                 if match_letters in file_name or file == file_name:
-                    ids_of_files_found[id] = self.data_structure.shared_files_info[id][file]+':'+file
+                    ids_of_files_found[ids] = self.data_structure.shared_files_info[ids][file]+':'+file
 
         available_client_addr: dict = {}
 
         if len(ids_of_files_found) != 0:
-            for id in ids_of_files_found:
-                if id in self.active_connections:
-                    addr: list = self.active_connections[id][0]
-                    file_path: str = ids_of_files_found[id]
+            for ids in ids_of_files_found:
+                if ids in self.active_connections:
+                    addr: list = self.active_connections[ids][0]
+                    file_path: str = ids_of_files_found[ids]
                     available_client_addr[addr] = file_path
 
             if len(available_client_addr) != 0:
@@ -94,7 +101,6 @@ class Indexer:
                 try:
                     client_socket.sendall(json_data.encode())
                     client_socket.close()
-                    print('sent ', json_data)
                 except socket.error as error:
                     client_socket.close()
                     print(error)
