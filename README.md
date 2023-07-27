@@ -17,7 +17,6 @@ Once you see the below printed on the console, it means the server is running.
 Listening for new nodes"
 
 
-
 # How to integrate indexer
 
 ## Indexing
