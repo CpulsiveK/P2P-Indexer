@@ -80,13 +80,3 @@ For "makeFilePublic" request type it needs an extra parameter which is the id of
 ```python
 def indexReceivedPublicFiles(self, client_socket: socket.SocketType, id)
 ```
-
-
-
-
-
-
-
-
-
-
