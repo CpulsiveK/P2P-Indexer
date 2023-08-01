@@ -23,7 +23,7 @@ Listening for new nodes**
 
 
 ## Indexing
-The class ```python RoutingInfoDataStructure``` contains a method called ```python createDataStructure``` and this method is what is responsible for indexing.
+The class ```RoutingInfoDataStructure {}``` contains a method called ```createDataStructure()``` and this method is what is responsible for indexing.
 
 The files information is indexed on the server in a dictionary with the id of the sender as key and the file information as value.
 
@@ -38,7 +38,7 @@ shared_files_info:dict = {
 ```
 
 ## Server ip broadcast
-The ```python unicastIndexerAddr()``` function listens for incoming connections from peers and sends it's current ip on message "indexer ip?" received. This allows peers to be updated on any ip change from the server side.
+The ```unicastIndexerAddr()``` function listens for incoming connections from peers and sends it's current ip on message "indexer ip?" received. This allows peers to be updated on any ip change from the server side.
 This implementation is flawed in many ways and will be improved.
 
 NB:
@@ -46,9 +46,13 @@ The initial ip of the server on first time configuration on the local network mu
 
 
 ## Request handlers
-The "Indexer" class has methods for handling requests, which are: 
-"makeFilePublic"
-"searchFile"
+The **Indexer** class has methods for handling requests, which are: 
+```python
+makeFilePublic()
+```
+```python
+searchFile()
+```
 
 To access any of these requests, a request type must be sent to the indexer upon connection to the server where the server looks up its "requestTypes" dictionary to see if it exists and calls the associated method to handle the request. Here is the "requestTypes" dictionary:
 
